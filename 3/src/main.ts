@@ -29,3 +29,56 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.render(scene, camera);
+
+// vanilla js
+// let time = Date.now();
+
+// const tick = () => {
+//   const currentTime = Date.now();
+//   const deltaTime = currentTime - time;
+//   time = currentTime;
+
+//   console.log(deltaTime);
+
+//   // mesh.position.x += 0.01;
+//   // mesh.position.z -= 0.01;
+//   mesh.rotation.y -= 0.001 * deltaTime;
+
+//   renderer.render(scene, camera);
+
+//   requestAnimationFrame(tick);
+// };
+
+// threejs clock
+// const clock = new THREE.Clock();
+
+// const tick = () => {
+//   const elapsedTime = clock.getElapsedTime();
+
+//   // mesh.rotation.y = elapsedTime * Math.PI * 2;
+//   // mesh.rotation.y = Math.cos(elapsedTime);
+//   // mesh.position.y = Math.sin(elapsedTime);
+//   // mesh.position.x = Math.cos(elapsedTime);
+
+//   camera.position.y = Math.sin(elapsedTime);
+//   camera.position.x = Math.cos(elapsedTime);
+//   camera.lookAt(mesh.position);
+
+//   renderer.render(scene, camera);
+
+//   requestAnimationFrame(tick);
+// };
+
+// gsap
+import gsap from "gsap";
+
+gsap.to(mesh.position, { x: 3, duration: 1, delay: 1 });
+gsap.to(mesh.position, { x: 0, duration: 1, delay: 2 });
+
+const tick = () => {
+  renderer.render(scene, camera);
+
+  requestAnimationFrame(tick);
+};
+
+tick();
