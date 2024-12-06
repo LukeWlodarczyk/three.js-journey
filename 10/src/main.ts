@@ -2,24 +2,16 @@ import "./styles.css";
 import * as THREE from "three";
 import { OrbitControls, TextGeometry } from "three/examples/jsm/Addons.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
-import GUI from "lil-gui";
 
 /**
  * Base
  */
-// Debug
-const gui = new GUI();
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
 // Scene
 const scene = new THREE.Scene();
-
-// Axes helper
-
-const axesHelper = new THREE.AxesHelper();
-scene.add(axesHelper);
 
 /**
  * Textures
@@ -137,11 +129,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 /**
  * Animate
  */
-const clock = new THREE.Clock();
 
 const tick = () => {
-  const elapsedTime = clock.getElapsedTime();
-
   // Update controls
   controls.update();
 
