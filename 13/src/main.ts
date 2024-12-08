@@ -504,6 +504,9 @@ const tick = () => {
     Math.sin(ghost3Angle * 2.34) *
     Math.sin(ghost3Angle * 3.45);
 
+  // Door Light flickering
+  doorLight.intensity = Math.random() * 8;
+
   // Update controls
   controls.update();
 
