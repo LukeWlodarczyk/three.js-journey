@@ -17,7 +17,16 @@ debugObject.createSphere = () =>
     new CANNON.Vec3(Math.random() - 0.5 * 3, 3, Math.random() - 0.5 * 3)
   );
 
+debugObject.createBox = () =>
+  createBox(
+    Math.random(),
+    Math.random(),
+    Math.random(),
+    new CANNON.Vec3(Math.random() - 0.5 * 3, 3, Math.random() - 0.5 * 3)
+  );
+
 gui.add(debugObject, "createSphere");
+gui.add(debugObject, "createBox");
 
 /**
  * Base
@@ -202,6 +211,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 type Obj = { mesh: THREE.Mesh; body: CANNON.Body };
 const objectToUpdate: Obj[] = [];
 
+// Sphere
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 const sphereMaterial = new THREE.MeshStandardMaterial({
   metalness: 0.3,
@@ -237,6 +247,47 @@ const createSphere = (radius: number, position: CANNON.Vec3) => {
 
 createSphere(0.5, new CANNON.Vec3(0, 3, 0));
 
+// Box
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const boxMaterial = new THREE.MeshStandardMaterial({
+  metalness: 0.3,
+  roughness: 0.4,
+  envMap: environmentMapTexture,
+  envMapIntensity: 0.5,
+});
+
+const createBox = (
+  width: number,
+  height: number,
+  depth: number,
+  position: CANNON.Vec3
+) => {
+  // Three.js mesh
+  const mesh = new THREE.Mesh(boxGeometry, boxMaterial);
+  mesh.scale.set(width, height, depth);
+  mesh.castShadow = true;
+  mesh.position.copy(position);
+  scene.add(mesh);
+
+  // Cannon.js body
+
+  const shape = new CANNON.Box(
+    new CANNON.Vec3(width / 2, height / 2, depth / 2)
+  );
+
+  const body = new CANNON.Body({
+    mass: 1,
+    position: new CANNON.Vec3(0, 3, 0),
+    shape,
+  });
+
+  body.position.copy(position);
+
+  world.addBody(body);
+
+  objectToUpdate.push({ mesh, body });
+};
+
 /**
  * Animate
  */
@@ -255,12 +306,8 @@ const tick = () => {
 
   for (const object of objectToUpdate) {
     object.mesh.position.copy(object.body.position);
+    object.mesh.quaternion.copy(object.body.quaternion);
   }
-
-  // sphere.position.x = sphereBody.position.x;
-  // sphere.position.y = sphereBody.position.y;
-  // sphere.position.z = sphereBody.position.z;
-  // sphere.position.copy(sphereBody.position);
 
   // Update controls
   controls.update();
