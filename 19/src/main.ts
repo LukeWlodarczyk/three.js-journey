@@ -66,6 +66,19 @@ window.addEventListener("resize", () => {
 });
 
 /**
+ * Mouse
+ */
+
+const mouse = new THREE.Vector2();
+
+window.addEventListener("mousemove", (event) => {
+  mouse.x = (event.clientX / sizes.width) * 2 - 1;
+  mouse.y = -(event.clientY / sizes.height) * 2 + 1;
+
+  console.log(mouse);
+});
+
+/**
  * Camera
  */
 // Base camera
@@ -106,16 +119,34 @@ const tick = () => {
   object3.position.y = Math.sin(elapsedTime * 1.4) * 1.5;
 
   // Cast a ray
-  const rayOrigin = new THREE.Vector3(-3, 0, 0);
-  const rayDirection = new THREE.Vector3(1, 0, 0);
-  rayDirection.normalize();
 
-  raycaster.set(rayOrigin, rayDirection);
+  // const rayOrigin = new THREE.Vector3(-3, 0, 0);
+  // const rayDirection = new THREE.Vector3(1, 0, 0);
+  // rayDirection.normalize();
+
+  // raycaster.set(rayOrigin, rayDirection);
+
+  // const objectsToTest = [object1, object2, object3];
+  // const intersects = raycaster.intersectObjects(objectsToTest);
+
+  // console.log(intersects);
+
+  // objectsToTest.forEach((object) => {
+  //   object.material.color.set("red");
+  // });
+
+  // intersects.forEach((intersect) => {
+  //   (
+  //     (intersect.object as THREE.Mesh).material as THREE.MeshBasicMaterial
+  //   ).color.set("blue");
+  // });
+
+  // Cast a ray based on mouse position
+
+  raycaster.setFromCamera(mouse, camera);
 
   const objectsToTest = [object1, object2, object3];
   const intersects = raycaster.intersectObjects(objectsToTest);
-
-  console.log(intersects);
 
   objectsToTest.forEach((object) => {
     object.material.color.set("red");
