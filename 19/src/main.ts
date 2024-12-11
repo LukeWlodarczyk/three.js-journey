@@ -74,8 +74,6 @@ const mouse = new THREE.Vector2();
 window.addEventListener("mousemove", (event) => {
   mouse.x = (event.clientX / sizes.width) * 2 - 1;
   mouse.y = -(event.clientY / sizes.height) * 2 + 1;
-
-  console.log(mouse);
 });
 
 /**
@@ -108,6 +106,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
  * Animate
  */
 const clock = new THREE.Clock();
+
+let currentIntersect: THREE.Object3D | null = null;
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
@@ -157,6 +157,18 @@ const tick = () => {
       (intersect.object as THREE.Mesh).material as THREE.MeshBasicMaterial
     ).color.set("blue");
   });
+
+  if (intersects.length) {
+    if (currentIntersect === null) {
+      console.log("mouseenter");
+    }
+    currentIntersect = intersects[0].object;
+  } else {
+    if (currentIntersect !== null) {
+      console.log("mouseleave");
+    }
+    currentIntersect = null;
+  }
 
   // Update controls
   controls.update();
