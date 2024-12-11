@@ -2,6 +2,7 @@ import "./styles.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
+import { GLTFLoader, DRACOLoader } from "three/examples/jsm/Addons.js";
 
 /**
  * Base
@@ -14,6 +15,23 @@ const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
 // Scene
 const scene = new THREE.Scene();
+
+/**
+ * Models
+ */
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("./draco/");
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
+
+gltfLoader.load("./models/Duck/glTF-Draco/Duck.gltf", (gltf) => {
+  console.log("succes", gltf);
+
+  // scene.add(...gltf.scene.children);
+
+  scene.add(gltf.scene);
+});
 
 /**
  * Floor
