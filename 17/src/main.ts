@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
 
-import CANNON, { ICollisionEvent } from "cannon";
+import * as CANNON from "cannon-es";
 
 /**
  * Debug
@@ -28,7 +28,7 @@ debugObject.createBox = () =>
 debugObject.reset = () => {
   for (const object of objectsToUpdate) {
     object.body.removeEventListener("collide", playHitSound);
-    world.remove(object.body);
+    world.removeBody(object.body);
 
     scene.remove(object.mesh);
   }
