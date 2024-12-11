@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
 
-import CANNON from "cannon";
+import CANNON, { ICollisionEvent } from "cannon";
 
 /**
  * Debug
@@ -36,6 +36,22 @@ const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 
 // Scene
 const scene = new THREE.Scene();
+
+/**
+ * Sounds
+ */
+
+const hitSound = new Audio("./sounds/hit.mp3");
+
+const playHitSound = (collision: ICollisionEvent) => {
+  const impactStrength = collision.contact.getImpactVelocityAlongNormal();
+
+  if (impactStrength < 1.5) return;
+
+  hitSound.volume = Math.random();
+  hitSound.currentTime = 0;
+  hitSound.play();
+};
 
 /**
  * Textures
@@ -241,7 +257,7 @@ const createSphere = (radius: number, position: CANNON.Vec3) => {
   });
 
   body.position.copy(position);
-
+  body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
   objectToUpdate.push({ mesh, body });
@@ -284,7 +300,7 @@ const createBox = (
   });
 
   body.position.copy(position);
-
+  body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
   objectToUpdate.push({ mesh, body });
