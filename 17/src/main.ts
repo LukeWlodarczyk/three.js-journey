@@ -25,8 +25,20 @@ debugObject.createBox = () =>
     new CANNON.Vec3(Math.random() - 0.5 * 3, 3, Math.random() - 0.5 * 3)
   );
 
+debugObject.reset = () => {
+  for (const object of objectsToUpdate) {
+    object.body.removeEventListener("collide", playHitSound);
+    world.remove(object.body);
+
+    scene.remove(object.mesh);
+  }
+
+  objectsToUpdate.splice(0, objectsToUpdate.length);
+};
+
 gui.add(debugObject, "createSphere");
 gui.add(debugObject, "createBox");
+gui.add(debugObject, "reset");
 
 /**
  * Base
@@ -227,7 +239,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 // Utils
 
 type Obj = { mesh: THREE.Mesh; body: CANNON.Body };
-const objectToUpdate: Obj[] = [];
+const objectsToUpdate: Obj[] = [];
 
 // Sphere
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -260,7 +272,7 @@ const createSphere = (radius: number, position: CANNON.Vec3) => {
   body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
-  objectToUpdate.push({ mesh, body });
+  objectsToUpdate.push({ mesh, body });
 };
 
 createSphere(0.5, new CANNON.Vec3(0, 3, 0));
@@ -303,7 +315,7 @@ const createBox = (
   body.addEventListener("collide", playHitSound);
   world.addBody(body);
 
-  objectToUpdate.push({ mesh, body });
+  objectsToUpdate.push({ mesh, body });
 };
 
 /**
@@ -322,7 +334,7 @@ const tick = () => {
 
   world.step(1 / 60, deltaTime, 3);
 
-  for (const object of objectToUpdate) {
+  for (const object of objectsToUpdate) {
     object.mesh.position.copy(object.body.position);
     object.mesh.quaternion.copy(object.body.quaternion);
   }
