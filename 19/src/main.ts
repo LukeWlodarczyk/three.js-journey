@@ -2,6 +2,7 @@ import "./styles.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
 
 /**
  * Base
@@ -109,6 +110,28 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
+ * Models
+ */
+
+const gltfLoader = new GLTFLoader();
+
+let model: THREE.Object3D | null = null;
+
+gltfLoader.load("./models/Duck/glTF/Duck.gltf", (gltf) => {
+  model = gltf.scene;
+
+  model.position.y = -1.2;
+  scene.add(gltf.scene);
+});
+
+// Light
+const ambientLight = new THREE.AmbientLight("#ffffff", 0.9);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight("#ffffff", 2.1);
+directionalLight.position.set(1, 2, 3);
+scene.add(directionalLight);
+/**
  * Animate
  */
 const clock = new THREE.Clock();
@@ -174,6 +197,18 @@ const tick = () => {
       console.log("mouseleave");
     }
     currentIntersect = null;
+  }
+
+  // Model intersects
+
+  if (model) {
+    const modelIntersect = raycaster.intersectObject(model);
+
+    if (modelIntersect.length) {
+      model.scale.set(1.2, 1.2, 1.2);
+    } else {
+      model.scale.set(1, 1, 1);
+    }
   }
 
   // Update controls
