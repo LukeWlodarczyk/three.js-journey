@@ -2,6 +2,14 @@ import "./styles.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import GUI from "lil-gui";
+import { GLTFLoader } from "three/examples/jsm/Addons.js";
+
+/**
+ * Loaders
+ */
+const gltfLoader = new GLTFLoader();
+
+const cubeTextureLoader = new THREE.CubeTextureLoader();
 
 /**
  * Base
@@ -16,14 +24,70 @@ const canvas = document.querySelector("canvas.webgl") as HTMLCanvasElement;
 const scene = new THREE.Scene();
 
 /**
+ * Environment map
+ */
+
+scene.environmentIntensity = 1;
+scene.backgroundBlurriness = 0;
+scene.backgroundIntensity = 1;
+// scene.backgroundRotation.y = 1;
+// scene.environmentRotation.y = 1
+
+gui.add(scene, "environmentIntensity").min(0).max(10).step(0.001);
+gui.add(scene, "backgroundBlurriness").min(0).max(1).step(0.001);
+gui.add(scene, "backgroundIntensity").min(0).max(10).step(0.001);
+gui
+  .add(scene.backgroundRotation, "y")
+  .min(0)
+  .max(Math.PI * 2)
+  .step(0.001)
+  .name("backgroundRotationY");
+
+gui
+  .add(scene.environmentRotation, "y")
+  .min(0)
+  .max(Math.PI * 2)
+  .step(0.001)
+  .name("environmentRotationY");
+
+// LDR cube texture
+
+const environmentMap = cubeTextureLoader.load([
+  "./environmentMaps/0/px.png",
+  "./environmentMaps/0/nx.png",
+  "./environmentMaps/0/py.png",
+  "./environmentMaps/0/ny.png",
+  "./environmentMaps/0/pz.png",
+  "./environmentMaps/0/nz.png",
+]);
+
+scene.environment = environmentMap;
+scene.background = environmentMap;
+
+/**
  * Torus Knot
  */
 const torusKnot = new THREE.Mesh(
   new THREE.TorusKnotGeometry(1, 0.4, 100, 16),
-  new THREE.MeshBasicMaterial()
+  new THREE.MeshStandardMaterial({
+    roughness: 0.3,
+    metalness: 1,
+    color: 0xaaaaaa,
+  })
 );
+
+torusKnot.position.x = -4;
 torusKnot.position.y = 4;
 scene.add(torusKnot);
+
+/**
+ * Models
+ */
+gltfLoader.load("./models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
+  console.log(gltf);
+  gltf.scene.scale.set(10, 10, 10);
+  scene.add(gltf.scene);
+});
 
 /**
  * Sizes
